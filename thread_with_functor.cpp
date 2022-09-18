@@ -22,6 +22,9 @@ int main()
     
     std::thread t3{ Vehicle() };// Use uniform initialization with braces
 
+    // Whichever option we use, the idea is the same: the function object is copied into internal storage accessible to the new thread, 
+    // and the new thread invokes the operator (). The Vehicle class can of course have data members and other member functions too.
+
     // do something in main()
     std::cout << "Finished work in main \n";
 
