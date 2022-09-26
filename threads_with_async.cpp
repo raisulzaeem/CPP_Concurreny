@@ -21,6 +21,12 @@ int main()
     double num = 42.0, denom = 2.0;
     std::future<double> ftr = std::async(divideByNumber, num, denom); // async returns a future
 
+    // with std::async, the system decides wether the associated function should be run asynchronously or synchronously. 
+    // By adjusting the launch parameters of std::async manually, we can directly influence wether the associated thread function will be executed synchronously or asynchronously.
+
+    // std::future<double> ftr = std::async(std::launch::deferred, divideByNumber, num, denom); --> synchronously
+    // std::future<double> ftr = std::async(std::launch::async, divideByNumber, num, denom); --> asybchronously
+
     // retrieve result within try-catch-block
     try
     {
