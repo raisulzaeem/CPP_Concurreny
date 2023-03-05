@@ -27,7 +27,9 @@ int main()
 {
     // create thread
     Vehicle v1, v2;
+    // here Vehicle object v1 is passed to the thread function by value, thus a copy is made which does not affect the „original“ living in the main thread.
     std::thread t1 = std::thread(&Vehicle::addID, v1, 1); // call member function on object v
+    // here Vehicle object v2 is passed to the thread function by reference, thus the changes made to the „original“ will also be visible the main thread.
     std::thread t2 = std::thread(&Vehicle::addID, &v2, 2); // call member function on object v
 
     // wait for thread to finish
