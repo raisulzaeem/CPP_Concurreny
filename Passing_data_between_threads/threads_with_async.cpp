@@ -25,7 +25,7 @@ int main()
     // By adjusting the launch parameters of std::async manually, we can directly influence wether the associated thread function will be executed synchronously or asynchronously.
 
     // std::future<double> ftr = std::async(std::launch::deferred, divideByNumber, num, denom); --> synchronously
-    // std::future<double> ftr = std::async(std::launch::async, divideByNumber, num, denom); --> asybchronously
+    // std::future<double> ftr = std::async(std::launch::async, divideByNumber, num, denom); --> asynchronously
 
     // retrieve result within try-catch-block
     try
