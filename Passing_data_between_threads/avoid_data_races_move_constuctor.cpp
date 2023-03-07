@@ -35,6 +35,9 @@ public:
 
         std::cout << "Vehicle #" << _id << " move constructor called" << std::endl;
     };
+    ~Vehicle(){
+        std::cout << "Vehicle #" << _id << " destructor called" << std::endl;
+    }
 
     // setter and getter
     void setID(int id) { _id = id; }
@@ -54,9 +57,11 @@ int main()
     Vehicle v1(1, "Vehicle 1"); // initializing constructor
 
     // launch a thread that modifies the Vehicle name
-    std::future<void> ftr = std::async([](Vehicle v) {
+    std::future<void> ftr = std::async([](Vehicle && v) {
         v.setName("Vehicle 2");
     },std::move(v0));
+
+    // multiple move constructions, why? https://stackoverflow.com/questions/14912159/stdasync-and-object-copy
 
     ftr.wait();
     std::cout << v0.getName() << std::endl;
