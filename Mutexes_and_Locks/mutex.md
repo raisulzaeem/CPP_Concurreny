@@ -40,3 +40,27 @@ In the following, a short overview of the different available mutex types is giv
 *   `recursive_mutex`: allows multiple acquisitions of the mutex from the same thread.
 *   `timed_mutex`: similar to mutex, but it comes with two more methods try_lock_for() and try_lock_until() that try to acquire the mutex for a period of time or until a moment in time is reached.
 *   `recursive_timed_mutex`: is a combination of timed_mutex and recursive_mutex.
+
+# Using Locks to Avoid Deadlocks
+
+## Lock Guard
+
+In the previous example, we have directly called the `lock()` and `unlock()` functions of a mutex. The idea of "working under the lock" is to block unwanted access by other threads to the same resource. Only the thread which acquired the lock can unlock the mutex and give all remaining threads the chance to acquire the lock. In practice however, direct calls to `lock()` should be avoided at all cost! Imagine that while working under the lock, a thread would throw an exception and exit the critical section without calling the unlock function on the mutex. In such a situation, the program would most likely freeze as no other thread could acquire the mutex any more. This is exactly what we have seen in the function `divideByNumber` from the previous example.
+
+We can avoid this problem by creating a `std::lock_guard` object, which keeps an associated mutex locked during the entire object life time. The lock is acquired on construction and released automatically on destruction. This makes it impossible to forget unlocking a critical section. Also, `std::lock_guard` guarantees exception safety because any critical section is automatically unlocked when an exception is thrown.
+
+
+## Unique Lock
+
+The problem with the previous example is that we can only lock the mutex once and the only way to control lock and unlock is by invalidating the scope of the std::lock_guard object. But what if we wanted (or needed) a finer control of the locking mechanism?
+
+A more flexible alternative to std::lock_guard is _unique_lock_, that also provides support for more advanced mechanisms, such as deferred locking, time locking, recursive locking, transfer of lock ownership and use of condition variables (which we will discuss later). It behaves similar to lock_guard but provides much more flexibility, especially with regard to the timing behavior of the locking mechanism.
+
+The main advantages of using `std::unique_lock<>` over `std::lock_guard` are briefly summarized in the following. Using `std::unique_lock` allows you to…
+
+1.  …construct an instance without an associated mutex using the default constructor
+2.  …construct an instance with an associated mutex while leaving the mutex unlocked at first using the deferred-locking constructor
+3.  …construct an instance that tries to lock a mutex, but leaves it unlocked if the lock failed using the try-lock constructor
+4.  …construct an instance that tries to acquire a lock for either a specified time period or until a specified point in time
+
+Despite the advantages of `std::unique_lock<>` and `std::lock_guard` over accessing the mutex directly, however, the deadlock situation where two mutexes are accessed simultaneously (see the last section) will still occur.
